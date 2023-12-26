@@ -205,7 +205,7 @@ class RemoteFeedLoaderTests: XCTestCase {
 
         action()
 
-        wait(for: [exp])
+        wait(for: [exp], timeout: 1)
     }
 
     private class HTTPClientSpy: HTTPClient {
