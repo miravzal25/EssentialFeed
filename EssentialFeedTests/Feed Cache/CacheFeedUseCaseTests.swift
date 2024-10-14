@@ -28,23 +28,27 @@ final class CacheFeedUseCaseTests: XCTestCase {
 
    
     func test_init_doesNotDeleteCacheUponCreation() {
-        let store = FeedStore()
-        let _ = LocalFeedLoader(feedStore: store)
+        let (_, store) = makeSUT()
         
         XCTAssertEqual(store.deleteCachedFeedCallCount, 0)
     }
     
     func test_save_requestCacheDeletion() {
-        let store = FeedStore()
-        let useCase = LocalFeedLoader(feedStore: store)
+        let (sut, store) = makeSUT()
         let items = [uniqueItem(), uniqueItem()]
         
-        useCase.save(items)
+        sut.save(items)
         
         XCTAssertEqual(store.deleteCachedFeedCallCount, 1)
     }
     
     // MARK: - Helpers
+    
+    private func makeSUT() -> (sut: LocalFeedLoader, store: FeedStore) {
+        let store = FeedStore()
+        let sut = LocalFeedLoader(feedStore: store)
+        return (sut, store)
+    }
     
     private func uniqueItem() -> FeedItem {
         FeedItem(
