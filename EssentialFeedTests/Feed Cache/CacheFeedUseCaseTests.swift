@@ -9,27 +9,43 @@ import XCTest
 import EssentialFeed
 
 class LocalFeedLoader {
-    private let feedStore: FeedStore
+    private let store: FeedStore
     
-    init(feedStore: FeedStore) {
-        self.feedStore = feedStore
+    init(store: FeedStore) {
+        self.store = store
     }
     
     func save(_ items: [FeedItem]) {
-        feedStore.deleteFeedCache()
+        store.deleteFeedCache { [unowned self] error in
+            if error == nil {
+                self.store.insert(items)
+            }
+        }
     }
 }
 
 class FeedStore {
-    var deleteCachedFeedCallCount: Int = 0
-    var insertCallCount: Int = 0
+    typealias DeletionCompletion = (Error?) -> Void
     
-    func deleteFeedCache() {
+    var insertCallCount: Int = 0
+    var deleteCachedFeedCallCount: Int = 0
+    var deletionCompletions: [DeletionCompletion] = []
+    
+    func deleteFeedCache(completion: @escaping DeletionCompletion) {
         deleteCachedFeedCallCount += 1
+        deletionCompletions.append(completion)
     }
     
-    func completeDeletion(with error: NSError, at index: Int = 0) {
-        
+    func completeDeletion(with error: Error, at index: Int = 0) {
+        deletionCompletions[index](error)
+    }
+    
+    func completeSuccessfully(at index: Int = 0) {
+        deletionCompletions[index](nil)
+    }
+    
+    func insert(_ items: [FeedItem]) {
+        insertCallCount += 1
     }
 }
 
@@ -62,11 +78,21 @@ final class CacheFeedUseCaseTests: XCTestCase {
         XCTAssertEqual(store.insertCallCount, 0)
     }
     
+    func test_save_requestNewCacheInsetionOnSuccessfullyDeletion() {
+        let (sut, store) = makeSUT()
+        let items = [uniqueItem(), uniqueItem()]
+        
+        sut.save(items)
+        store.completeSuccessfully(at: 0)
+        
+        XCTAssertEqual(store.insertCallCount, 1)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStore) {
         let store = FeedStore()
-        let sut = LocalFeedLoader(feedStore: store)
+        let sut = LocalFeedLoader(store: store)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
