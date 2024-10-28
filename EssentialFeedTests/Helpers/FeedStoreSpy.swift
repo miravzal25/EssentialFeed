@@ -41,6 +41,10 @@ class FeedStoreSpy: FeedStore {
         retrievalCompletions[index](error)
     }
     
+    func completeRetrieveWithEmptyCache(at index: Int = 0) {
+        retrievalCompletions[index](nil)
+    }
+    
     func deleteFeedCache(completion: @escaping DeletionCompletion) {
         receivedMessages.append(.deleteCachedFeed)
         deletionCompletions.append(completion)
