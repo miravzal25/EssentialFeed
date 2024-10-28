@@ -74,13 +74,13 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         })
     }
     
-    func test_load_deletesCacheOnRetrivalError() {
+    func test_load_hasNoSideEffectsOnRetrivalError() {
         let (sut, store) = makeSUT()
         
         sut.load { _ in }
         store.completeRetrival(with: anyNSError())
         
-        XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedFeed])
+        XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
     
     func test_load_notDeleteCacheOnEmptyCache() {
@@ -195,8 +195,6 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     private func anyURL() -> URL {
         return URL(string: "http://any-url.com")!
     }
-
-
     
     private func anyNSError() -> NSError {
         NSError(domain: "any error", code: 0)
