@@ -49,7 +49,7 @@ class FeedStoreSpy: FeedStore {
         retrievalCompletions[index](.found(feed: feed, timestamp: timestamp))
     }
     
-    func deleteFeedCache(completion: @escaping DeletionCompletion) {
+    func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         receivedMessages.append(.deleteCachedFeed)
         deletionCompletions.append(completion)
     }
