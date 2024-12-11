@@ -5,8 +5,6 @@
 //  Created by Miravzal Sultonov on 12/11/24.
 //
 
-import Foundation
-
 protocol FeedStoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache()
     func test_retrieve_hasNoSideEffectsOnEmptyCache()
