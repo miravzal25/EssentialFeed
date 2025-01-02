@@ -38,7 +38,7 @@ final class ImageFeedTableViewCell: UITableViewCell {
         return imageView
     }()
     
-    let locatinLabel: UILabel = {
+    let locationLabel: UILabel = {
         let label = UILabel()
         label.text = "Label\nLabel"
         label.font = .systemFont(ofSize: 15)
@@ -90,7 +90,7 @@ final class ImageFeedTableViewCell: UITableViewCell {
         feedImageContainerView.addSubview(feedImageView)
         
         locationStackView.addArrangedSubview(pinContainerView)
-        locationStackView.addArrangedSubview(locatinLabel)
+        locationStackView.addArrangedSubview(locationLabel)
         
         stackView.addArrangedSubview(locationStackView)
         stackView.addArrangedSubview(feedImageContainerView)
@@ -100,11 +100,11 @@ final class ImageFeedTableViewCell: UITableViewCell {
     }
     
     func setConstraints() {
-        let topAnchor = stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6)
+        let topAnchor = stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16)
         topAnchor.priority = UILayoutPriority(999)
         topAnchor.isActive = true
         
-        let bottomAnchor = stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6)
+        let bottomAnchor = stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         bottomAnchor.priority = UILayoutPriority(999)
         bottomAnchor.isActive = true
         
@@ -128,5 +128,17 @@ final class ImageFeedTableViewCell: UITableViewCell {
             feedImageView.bottomAnchor.constraint(equalTo: feedImageContainerView.bottomAnchor),
             feedImageView.trailingAnchor.constraint(equalTo: feedImageContainerView.trailingAnchor),
         ])
+    }
+}
+
+extension ImageFeedTableViewCell {
+    func configure(with model: FeedImageViewModel) {
+        locationLabel.text = model.location
+        locationStackView.isHidden = model.location == nil
+
+        descriptionLabel.text = model.description
+        descriptionLabel.isHidden = model.description == nil
+
+        feedImageView.image = UIImage(named: model.imageName)
     }
 }
