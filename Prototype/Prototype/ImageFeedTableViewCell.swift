@@ -85,6 +85,16 @@ final class ImageFeedTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        feedImageView.alpha = 0
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        feedImageView.alpha = 0
+    }
+    
     func addSubviews() {
         pinContainerView.addSubview(pinImageView)
         feedImageContainerView.addSubview(feedImageView)
@@ -129,6 +139,18 @@ final class ImageFeedTableViewCell: UITableViewCell {
             feedImageView.trailingAnchor.constraint(equalTo: feedImageContainerView.trailingAnchor),
         ])
     }
+    
+    func fadeIn(_ image: UIImage?) {
+        feedImageView.image = image
+        
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0.3,
+            options: [],
+            animations: {
+                self.feedImageView.alpha = 1
+            })
+    }
 }
 
 extension ImageFeedTableViewCell {
@@ -139,6 +161,6 @@ extension ImageFeedTableViewCell {
         descriptionLabel.text = model.description
         descriptionLabel.isHidden = model.description == nil
 
-        feedImageView.image = UIImage(named: model.imageName)
+        fadeIn(UIImage(named: model.imageName))
     }
 }
