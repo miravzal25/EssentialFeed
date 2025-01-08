@@ -25,7 +25,7 @@
       "parallelizable" : true,
       "target" : {
         "containerPath" : "container:EssentialFeed.xcodeproj",
-        "identifier" : "961F94D02D2AB0830037D479",
+        "identifier" : "96642D432D2EB8B5006E54F6",
         "name" : "EssentialFeediOSTests"
       }
     }
