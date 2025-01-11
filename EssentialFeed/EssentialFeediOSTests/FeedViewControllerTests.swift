@@ -66,11 +66,11 @@ final class FeedViewControllerTests: XCTestCase {
         let (sut, _) = makeSUT()
         
         sut.simulateAppearance()
-        XCTAssertEqual(sut.refreshControl?.isRefreshing, true)
+        XCTAssertTrue(sut.isShowingLoadingIndicator)
         
         sut.refreshControl?.endRefreshing()
         sut.simulateAppearance()
-        XCTAssertEqual(sut.refreshControl?.isRefreshing, false)
+        XCTAssertFalse(sut.isShowingLoadingIndicator)
     }
     
     func test_viewIsAppearing_hidesLoadingIndicatorAfterLoaderCompletion() {
@@ -79,7 +79,7 @@ final class FeedViewControllerTests: XCTestCase {
         sut.simulateAppearance()
         loader.completeFeedLoading()
         
-        XCTAssertEqual(sut.refreshControl?.isRefreshing, false)
+        XCTAssertFalse(sut.isShowingLoadingIndicator)
     }
     
     func test_pullToRefresh_showsLoadingIndicator() {
@@ -89,7 +89,7 @@ final class FeedViewControllerTests: XCTestCase {
         sut.replaceRefreshControlWithFakeForiOS17Support()
         sut.simulaterUserInitiatedFeedReload()
         
-        XCTAssertEqual(sut.refreshControl?.isRefreshing, true)
+        XCTAssertTrue(sut.isShowingLoadingIndicator)
     }
     
     func test_pullToRefresh_hidesLoadingIndicatorOnLoaderCompletion() {
@@ -100,7 +100,7 @@ final class FeedViewControllerTests: XCTestCase {
         sut.simulaterUserInitiatedFeedReload()
         loader.completeFeedLoading()
         
-        XCTAssertEqual(sut.refreshControl?.isRefreshing, false)
+        XCTAssertFalse(sut.isShowingLoadingIndicator)
     }
 
     // MARK: - Helpers
@@ -164,6 +164,10 @@ private extension FeedViewController {
     
     func simulaterUserInitiatedFeedReload() {
         refreshControl?.simulatePullToRefresh()
+    }
+    
+    var isShowingLoadingIndicator: Bool {
+        return refreshControl?.isRefreshing == true
     }
 }
 
