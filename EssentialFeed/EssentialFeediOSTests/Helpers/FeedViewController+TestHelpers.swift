@@ -1,0 +1,97 @@
+//
+//  FeedViewController+TestHelpers.swift
+//  EssentialFeediOSTests
+//
+//  Created by Miravzal Sultonov on 1/14/25.
+//
+
+import UIKit
+import EssentialFeediOS
+
+extension FeedViewController {
+    func simulateAppearance() {
+        if !isViewLoaded {
+            viewDidLoad()
+            replaceRefreshControlWithFakeForiOS17Support()
+        }
+        
+        beginAppearanceTransition(true, animated: false)
+        endAppearanceTransition()
+    }
+    
+    func simulaterUserInitiatedFeedReload() {
+        refreshControl?.simulatePullToRefresh()
+    }
+    
+    @discardableResult
+    func simulateFeedImageViewVisible(at index: Int) -> FeedImageCell? {
+        feedImageView(at: index) as? FeedImageCell
+    }
+    
+    func simulateFeedImageViewNotVisible(at index: Int) {
+        let view = simulateFeedImageViewVisible(at: index)
+        
+        let delegate = tableView.delegate
+        let indexPath = IndexPath(row: index, section: feedImagesSection)
+        delegate?.tableView?(tableView, didEndDisplaying: view!, forRowAt: indexPath)
+    }
+    
+    func simulateFeedImageViewNearVisible(at index: Int = 0) {
+        let indexPath = IndexPath(row: index, section: feedImagesSection)
+        let ds = tableView.prefetchDataSource
+        ds?.tableView(tableView, prefetchRowsAt: [indexPath])
+    }
+    
+    func simulateFeedImageViewNotNearVisible(at index: Int = 0) {
+        simulateFeedImageViewNearVisible(at: index)
+        
+        let indexPath = IndexPath(row: index, section: feedImagesSection)
+        let ds = tableView.prefetchDataSource
+        ds?.tableView?(tableView, cancelPrefetchingForRowsAt: [indexPath])
+    }
+    
+    func replaceRefreshControlWithFakeForiOS17Support() {
+        let fake = FakeRefreshControl()
+        
+        refreshControl?.allTargets.forEach { target in
+            refreshControl?.actions(forTarget: target, forControlEvent: .valueChanged)?.forEach { action in
+                fake.addTarget(target, action: Selector(action), for: .valueChanged)
+            }
+        }
+        refreshControl = fake
+    }
+    
+    func numberOfRenderedFeedImageViews() -> Int {
+        tableView.numberOfRows(inSection: feedImagesSection)
+    }
+    
+    func feedImageView(at row: Int) -> UITableViewCell? {
+        let ds = tableView.dataSource
+        let index = IndexPath(row: row, section: feedImagesSection)
+        return ds?.tableView(tableView, cellForRowAt: index)
+    }
+    
+    var isShowingLoadingIndicator: Bool {
+        refreshControl?.isRefreshing == true
+    }
+    
+    private var feedImagesSection: Int {
+        0
+    }
+}
+
+class FakeRefreshControl: UIRefreshControl {
+    private var _isRefreshing: Bool = false
+    
+    override var isRefreshing: Bool {
+        _isRefreshing
+    }
+    
+    override func beginRefreshing() {
+        _isRefreshing = true
+    }
+    
+    override func endRefreshing() {
+        _isRefreshing = false
+    }
+}
