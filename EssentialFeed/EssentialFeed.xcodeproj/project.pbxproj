@@ -240,13 +240,6 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		96642D542D2EBC3E006E54F6 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		968585F02CBD765700628E75 /* Feed Cache */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,7 +309,6 @@
 				96D448512D0C403E00004236 /* EssentialFeedCacheIntegrationTests */,
 				961F94CB2D2AB0830037D479 /* EssentialFeediOS */,
 				96642D452D2EB8B5006E54F6 /* EssentialFeediOSTests */,
-				96642D542D2EBC3E006E54F6 /* Frameworks */,
 				96F2C6AC2B331FEC00A83E55 /* Products */,
 			);
 			sourceTree = "<group>";

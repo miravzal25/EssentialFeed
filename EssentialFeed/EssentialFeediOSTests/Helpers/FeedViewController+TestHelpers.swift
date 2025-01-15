@@ -11,7 +11,7 @@ import EssentialFeediOS
 extension FeedViewController {
     func simulateAppearance() {
         if !isViewLoaded {
-            viewDidLoad()
+            loadViewIfNeeded()
             replaceRefreshControlWithFakeForiOS17Support()
         }
         
@@ -58,6 +58,8 @@ extension FeedViewController {
                 fake.addTarget(target, action: Selector(action), for: .valueChanged)
             }
         }
+        
+        refreshController?.view = fake
         refreshControl = fake
     }
     
