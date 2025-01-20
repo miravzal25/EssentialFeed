@@ -29,7 +29,7 @@ public final class FeedViewController: UITableViewController, FeedLoadingView, U
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.register(FeedImageCell.self, forCellReuseIdentifier: "FeedImageCell")
+        tableView.register(FeedImageCell.self)
         tableView.prefetchDataSource = self
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
