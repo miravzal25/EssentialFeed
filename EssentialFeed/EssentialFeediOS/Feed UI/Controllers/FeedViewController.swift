@@ -7,7 +7,11 @@
 
 import UIKit
 
-public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
+public protocol FeedViewControllerDelegate {
+    func didRequestFeedRefresh()
+}
+
+public final class FeedViewController: UITableViewController, FeedLoadingView, UITableViewDataSourcePrefetching {
     private var imageLoader: FeedImageDataLoader?
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
     
@@ -15,21 +19,22 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         didSet { tableView.reloadData() }
     }
     
-    public var refreshController:  FeedRefreshViewController?
+    public var delegate:  FeedViewControllerDelegate?
     
-    convenience init(refreshController: FeedRefreshViewController) {
+    convenience init(delegate: FeedViewControllerDelegate) {
         self.init()
-        self.refreshController = refreshController
+        self.delegate = delegate
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.prefetchDataSource = self
-        refreshControl = refreshController?.view
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
         
         onViewIsAppearing = { vc in
-            vc.refreshController?.refresh()
+            vc.refresh()
             vc.onViewIsAppearing = nil
         }
     }
@@ -38,6 +43,18 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         super.viewIsAppearing(animated)
         
         onViewIsAppearing?(self)
+    }
+    
+    @objc private func refresh() {
+        delegate?.didRequestFeedRefresh()
+    }
+    
+    public func display(_ viewModel: FeedLoadingViewModel) {
+        if viewModel.isLoading {
+            refreshControl?.beginRefreshing()
+        } else {
+            refreshControl?.endRefreshing()
+        }
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -70,3 +87,4 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         cellController(forRowAt: indexPath).cancelTask()
     }
 }
+
