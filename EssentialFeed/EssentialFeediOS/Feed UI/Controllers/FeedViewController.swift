@@ -19,7 +19,7 @@ public final class FeedViewController: UITableViewController, FeedLoadingView, U
         didSet { tableView.reloadData() }
     }
     
-    public var delegate:  FeedViewControllerDelegate?
+    private(set) public var delegate: FeedViewControllerDelegate?
     
     convenience init(delegate: FeedViewControllerDelegate) {
         self.init()
@@ -29,6 +29,7 @@ public final class FeedViewController: UITableViewController, FeedLoadingView, U
     public override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.register(FeedImageCell.self, forCellReuseIdentifier: "FeedImageCell")
         tableView.prefetchDataSource = self
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
@@ -62,7 +63,7 @@ public final class FeedViewController: UITableViewController, FeedLoadingView, U
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        cellController(forRowAt: indexPath).view()
+        cellController(forRowAt: indexPath).view(in: tableView)
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -84,7 +85,7 @@ public final class FeedViewController: UITableViewController, FeedLoadingView, U
     }
     
     private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).cancelTask()
+        cellController(forRowAt: indexPath).cancelLoad()
     }
 }
 

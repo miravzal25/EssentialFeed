@@ -10,7 +10,7 @@ import EssentialFeediOS
 
 extension FeedImageCell {
     var isShowingLocation: Bool {
-        !locationContainer.isHidden
+        !locationStackView.isHidden
     }
 
     var locationText: String? {
