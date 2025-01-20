@@ -77,6 +77,7 @@ public final class FeedImageCell: UITableViewCell {
     }()
     
     public var onRetry: (() -> Void)?
+    public var onReuse: (() -> Void)?
     
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -89,6 +90,12 @@ public final class FeedImageCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        onReuse?()
     }
     
     public func addSubviews() {
