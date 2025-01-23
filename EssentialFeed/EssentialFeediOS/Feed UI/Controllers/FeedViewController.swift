@@ -16,7 +16,15 @@ public final class FeedViewController: UITableViewController, FeedLoadingView, U
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
     
     var tableModel = [FeedImageCellController]() {
-        didSet { tableView.reloadData() }
+        didSet {
+            if Thread.isMainThread {
+                tableView.reloadData()
+            } else {
+                DispatchQueue.main.async { [weak self] in
+                    self?.tableView.reloadData()
+                }
+            }
+        }
     }
     
     private(set) public var delegate: FeedViewControllerDelegate?
@@ -51,6 +59,10 @@ public final class FeedViewController: UITableViewController, FeedLoadingView, U
     }
     
     public func display(_ viewModel: FeedLoadingViewModel) {
+        guard Thread.isMainThread else {
+            return DispatchQueue.main.async { [weak self] in self?.display(viewModel) }
+        }
+        
         if viewModel.isLoading {
             refreshControl?.beginRefreshing()
         } else {
